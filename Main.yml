@@ -1,0 +1,24 @@
+name: Make YouTube Video Free
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: 'اكتب موضوع الفيديو هنا'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - run: npm install @anthropic-ai/sdk @remotion/cli remotion @remotion/renderer googleapis
+      - run: mkdir src out
+      - name: Run Bot
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_KEY }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_SECRET: ${{ secrets.YT_SECRET }}
+          YT_REFRESH: ${{ secrets.YT_REFRESH }}
+        run: node bot.js "${{ github.event.inputs.topic }}"
